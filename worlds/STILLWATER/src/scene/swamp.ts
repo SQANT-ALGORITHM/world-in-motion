@@ -5,21 +5,36 @@ import { createTrees } from './trees';
 import { createWater } from './water';
 import { createBoat } from '../boat/boat';
 
-export interface StillwaterWorld { scene: THREE.Scene; water: THREE.Mesh; }
+export interface StillwaterWorld {
+  scene: THREE.Scene;
+  water: THREE.Mesh;
+  boat: THREE.Group;
+  moon: THREE.Group;
+}
 
 export function createStillwater(): StillwaterWorld {
   const scene = new THREE.Scene();
   addAtmosphere(scene);
-  scene.add(createMoon(), createTrees(), createBoat());
+
+  const moon = createMoon();
+  const trees = createTrees();
+  const boat = createBoat();
+  scene.add(moon, trees, boat);
+
   const water = createWater();
   scene.add(water);
-  const bank = new THREE.Mesh(new THREE.CircleGeometry(42, 64), new THREE.MeshStandardMaterial({ color: '#101b17', roughness: 1 }));
+
+  const bank = new THREE.Mesh(
+    new THREE.CircleGeometry(42, 64),
+    new THREE.MeshStandardMaterial({ color: '#101b17', roughness: 1 }),
+  );
   bank.rotation.x = -Math.PI / 2;
   bank.position.y = -0.62;
   bank.scale.set(1.3, 0.8, 1);
   scene.add(bank);
+
   addLilyPads(scene);
-  return { scene, water };
+  return { scene, water, boat, moon };
 }
 
 function addLilyPads(scene: THREE.Scene): void {
@@ -28,7 +43,7 @@ function addLilyPads(scene: THREE.Scene): void {
     const pad = new THREE.Mesh(new THREE.CircleGeometry(0.18 + (i % 4) * 0.09, 8), material);
     pad.rotation.x = -Math.PI / 2;
     pad.position.set(Math.sin(i * 3.7) * 11, -0.47, -3 - (i % 6) * 5);
-    pad.rotation.z = i;
+    pad.rotation.z = i * 0.75;
     scene.add(pad);
   }
 }
