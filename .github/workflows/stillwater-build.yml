@@ -1,0 +1,28 @@
+name: STILLWATER build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: worlds/STILLWATER/package-lock.json
+
+      - name: Install dependencies
+        working-directory: worlds/STILLWATER
+        run: npm install
+
+      - name: Build production bundle
+        working-directory: worlds/STILLWATER
+        run: npm run build
